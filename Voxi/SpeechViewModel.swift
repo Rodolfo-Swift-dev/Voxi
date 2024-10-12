@@ -5,7 +5,7 @@
 //  Created by Rodolfo Gonzalez on 10-10-24.
 //
 
-import SwiftUI
+import Foundation
 import Combine
 
 class SpeechViewModel: ObservableObject {
@@ -13,13 +13,26 @@ class SpeechViewModel: ObservableObject {
     @Published var isAnalyzing = false
     @Published var isAuthorized = false
     
-    private var speechRecognizer = SpeechRecognizer()
-    private var cancellables = Set<AnyCancellable>()
+    private let speechRecognizer = SpeechRecognizer()
     private let startAnalysisSubject = PassthroughSubject<Void, Never>()
     private let stopAnalysisSubject = PassthroughSubject<Void, Never>()
+    private let startAuthorizationSubject = PassthroughSubject<Void, Never>()
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
-        speechRecognizer.authorizationStatus.assign(to: &$isAuthorized)
+        //forma rapida de vincular authorizationStatus con isAuthorized y poder reaccionar a sus cambios
+        //speechRecognizer.authorizationStatus.assign(to: &$isAuthorized)
+        
+        //forma amplia de suscribir authorizationStatus con isAuthorized y poder reaccionar a sus cambios, ademas podemos agregar codigo lo que lo hace mas flexible
+        speechRecognizer.authorizationStatus.sink { [weak self] authorized in
+            self?.isAuthorized = authorized
+        }
+        .store(in: &cancellables)
+        
+        startAuthorizationSubject.sink { [weak self] in
+            self?.startAuthorization()
+        }
+        .store(in: &cancellables)
         
         startAnalysisSubject.sink { [weak self] in
             self?.startAnalysis()
@@ -32,15 +45,22 @@ class SpeechViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
+    private func startAuthorization() {
+        speechRecognizer.requestAuthorization()
+    }
     private func startAnalysis() {
-        guard isAuthorized else { return }
         isAnalyzing = true
+        guard isAuthorized else { return }
+        
     }
     private func stopAnalysis() {
         isAnalyzing = false
     }
     func saveTranscription() {
         
+    }
+    func requestStartAuthorization() {
+        startAuthorizationSubject.send(())
     }
     func requestStartAnalysis() {
         startAnalysisSubject.send(())

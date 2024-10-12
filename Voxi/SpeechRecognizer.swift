@@ -6,17 +6,23 @@
 //
 
 import Speech
+import SwiftUI
 import Combine
 
 class SpeechRecognizer {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "es-ES"))
+    private let startAuthorizationSubject = PassthroughSubject<Void, Never>()
+    private var cancellables = Set<AnyCancellable>()
     let authorizationStatus = PassthroughSubject<Bool, Never>()
     
     init() {
-        requestAuthorization()
+        startAuthorizationSubject.sink { [weak self] in
+            self?.startRequestAuthorization()
+        }
+        .store(in: &cancellables)
     }
     
-    private func requestAuthorization() {
+    private func startRequestAuthorization() {
         SFSpeechRecognizer.requestAuthorization { status in
             DispatchQueue.main.async {
                 switch status {
@@ -29,5 +35,8 @@ class SpeechRecognizer {
                 }
             }
         }
+    }
+    func requestAuthorization() {
+        startAuthorizationSubject.send(())
     }
 }

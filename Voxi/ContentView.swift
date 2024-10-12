@@ -95,19 +95,15 @@ struct ContentView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
                         .padding()
+                    
                 }
+                .onReceive(speechViewModel.$isAuthorized) { isAuthorized in
+                                    if isAuthorized {
+                                        toggleAnalysis()
+                                    }
+                                }
             }
             .navigationTitle("Transcripción")
-            .alert(isPresented: $showAlert) {
-                let messageAlert = "Necesitamos tu permiso para usar el reconocimiento de voz. ¿Deseas otorgarlo?"
-                
-                return Alert(
-                    title: Text("Permiso de reconocimiento de voz"),
-                    message: Text(messageAlert),
-                    primaryButton: .default(Text("Si")) {},
-                    secondaryButton: .cancel(Text("No"))
-                )
-            }
         }
     }
     private func toggleAnalysis() {
@@ -115,6 +111,7 @@ struct ContentView: View {
             speechViewModel.requestStopAnalysis()
         } else {
             if !speechViewModel.isAuthorized {
+                speechViewModel.requestStartAuthorization()
                 showAlert = true
             } else {
                 speechViewModel.requestStartAnalysis()
