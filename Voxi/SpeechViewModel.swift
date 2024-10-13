@@ -24,8 +24,18 @@ class SpeechViewModel: ObservableObject {
         //speechRecognizer.authorizationStatus.assign(to: &$isAuthorized)
         
         //forma amplia de suscribir authorizationStatus con isAuthorized y poder reaccionar a sus cambios, ademas podemos agregar codigo lo que lo hace mas flexible
-        speechRecognizer.authorizationStatus.sink { [weak self] authorized in
+        speechRecognizer.authorizationStatusPublisher.sink { [weak self] authorized in
             self?.isAuthorized = authorized
+        }
+        .store(in: &cancellables)
+        
+        speechRecognizer.speechResultPublisher.sink { [weak self] transcription in
+            self?.currentTranscription = transcription
+        }
+        .store(in: &cancellables)
+        
+        speechRecognizer.speechErrorPublisher.sink {
+            print("Error")
         }
         .store(in: &cancellables)
         
@@ -43,6 +53,7 @@ class SpeechViewModel: ObservableObject {
             self?.stopAnalysis()
         }
         .store(in: &cancellables)
+        
     }
     
     private func startAuthorization() {
@@ -51,13 +62,11 @@ class SpeechViewModel: ObservableObject {
     private func startAnalysis() {
         isAnalyzing = true
         guard isAuthorized else { return }
-        
+        speechRecognizer.requestStartRecognition()
     }
     private func stopAnalysis() {
         isAnalyzing = false
-    }
-    func saveTranscription() {
-        
+        speechRecognizer.requestStopRecognition()
     }
     func requestStartAuthorization() {
         startAuthorizationSubject.send(())
@@ -67,5 +76,8 @@ class SpeechViewModel: ObservableObject {
     }
     func requestStopAnalysis() {
         stopAnalysisSubject.send(())
+    }
+    func saveTranscription() {
+        
     }
 }
