@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var speechViewModel : SpeechViewModel
     @State private var showSaveDeleteOptions = false
-    @State private var showAlert = false
     
     var body: some View {
         NavigationView {
@@ -43,7 +42,9 @@ struct ContentView: View {
                     HStack(spacing: 16) {
                         Button(action: {
                             speechViewModel.saveTranscription()
-                            showSaveDeleteOptions = false
+                            withAnimation {
+                                showSaveDeleteOptions = false
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
@@ -57,8 +58,13 @@ struct ContentView: View {
                             .cornerRadius(8)
                         }
                         Button(action: {
-                            speechViewModel.currentTranscription = ""
-                            showSaveDeleteOptions = false
+                            DispatchQueue.main.async {
+                                speechViewModel.currentTranscription = ""
+                            }
+                            
+                            withAnimation {
+                                showSaveDeleteOptions = false
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "trash.fill")
@@ -88,7 +94,7 @@ struct ContentView: View {
                         .cornerRadius(8)
                     }
                     .padding(.horizontal)
-                    .padding(.top, 10)
+                    .padding(.top)
                 }
                 NavigationLink(destination: CategoriesView()) {
                     Text("Ver categorias")
@@ -99,7 +105,10 @@ struct ContentView: View {
                 }
                 .onReceive(speechViewModel.$isAuthorized) { isAuthorized in
                                     if isAuthorized {
-                                        toggleAnalysis()
+                                        DispatchQueue.main.async {
+                                            toggleAnalysis()
+                                        }
+                                        
                                     }
                                 }
             }
@@ -108,11 +117,13 @@ struct ContentView: View {
     }
     private func toggleAnalysis() {
         if speechViewModel.isAnalyzing {
+            showSaveDeleteOptions = !speechViewModel.currentTranscription.isEmpty
             speechViewModel.requestStopAnalysis()
+            
+            
         } else {
             if !speechViewModel.isAuthorized {
                 speechViewModel.requestStartAuthorization()
-                showAlert = true
             } else {
                 speechViewModel.requestStartAnalysis()
             }

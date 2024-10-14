@@ -88,7 +88,7 @@ class SpeechRecognizer {
         // Obtenemos el nodo de entrada de audio del motor de audio
         let inputNode = audioEngine.inputNode
         // Configuramos la solicitud para que informe los resultados parciales
-        recognitionRequest.shouldReportPartialResults
+        recognitionRequest.shouldReportPartialResults = true
         // Creamos la tarea de reconocimiento, pasando la solicitud y un manejador de resultados
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { result, error in
             // Si obtenemos un resultado, publicamos la transcripción parcial o completa a través del speechResultPublisher
@@ -133,7 +133,21 @@ class SpeechRecognizer {
     }
     
     private func stoptRecognition() {
-        print("stop")
+        // Detenemos el motor de audio
+        audioEngine.stop()
+        // Finalizamos el flujo de audio de la solicitud de reconocimiento
+        recognitionRequest?.endAudio()
+        // Cancelamos la tarea de reconocimiento activa
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        // Desactivamos la sesión de audio
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            // Si ocurre un error al desactivar la sesión de audio, mostramos un mensaje de error
+            
+        }
     }
     
     func requestAuthorization() {

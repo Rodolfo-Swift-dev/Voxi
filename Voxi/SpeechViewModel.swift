@@ -25,12 +25,20 @@ class SpeechViewModel: ObservableObject {
         
         //forma amplia de suscribir authorizationStatus con isAuthorized y poder reaccionar a sus cambios, ademas podemos agregar codigo lo que lo hace mas flexible
         speechRecognizer.authorizationStatusPublisher.sink { [weak self] authorized in
-            self?.isAuthorized = authorized
+            DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    self?.isAuthorized = authorized
+                }
+                
+            }
         }
         .store(in: &cancellables)
         
         speechRecognizer.speechResultPublisher.sink { [weak self] transcription in
-            self?.currentTranscription = transcription
+            DispatchQueue.main.async {
+                self?.currentTranscription = transcription
+            }
+            
         }
         .store(in: &cancellables)
         
@@ -60,14 +68,20 @@ class SpeechViewModel: ObservableObject {
         speechRecognizer.requestAuthorization()
     }
     private func startAnalysis() {
-        isAnalyzing = true
+        
         guard isAuthorized else { return }
         speechRecognizer.requestStartRecognition()
+        DispatchQueue.main.async {
+            self.isAnalyzing = true
+        }
     }
     private func stopAnalysis() {
-        isAnalyzing = false
+        DispatchQueue.main.async {
+            self.isAnalyzing = false
+        }
         speechRecognizer.requestStopRecognition()
     }
+    
     func requestStartAuthorization() {
         startAuthorizationSubject.send(())
     }
