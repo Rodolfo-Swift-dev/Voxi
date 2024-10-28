@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct VoxiApp: App {
-    @StateObject private var speechViewModel = SpeechViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(speechViewModel)
+                
         }
     }
 }
