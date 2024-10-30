@@ -25,8 +25,11 @@ class SpeechRecognizer {
     var errorPublisher: some Publisher<String?, Never> {
         errorSubject.eraseToAnyPublisher()
     }
-    var authorizationState: some Publisher<SFSpeechRecognizerAuthorizationStatus, Never> {
+    var authorizationSpeechState: some Publisher<SFSpeechRecognizerAuthorizationStatus, Never> {
         authorizationSpeechPublisher.eraseToAnyPublisher()
+    }
+    var authorizationMicroState: some Publisher<AVAudioSession.RecordPermission, Never> {
+        authorizationMicrophonePublisher.eraseToAnyPublisher()
     }
     
     private let recognitionTextSubject = PassthroughSubject<String, Never>()
@@ -61,7 +64,7 @@ class SpeechRecognizer {
         .eraseToAnyPublisher()  // Convertimos a AnyPublisher
     }
     
-    var authorizationMicrophonePublisher: AnyPublisher<Bool, Never> {
+    var authorizationMicrophonePublisher: AnyPublisher<AVAudioSession.RecordPermission, Never> {
         return Future { [weak self] promise in
             let audioSession = AVAudioSession.sharedInstance()
             
@@ -72,9 +75,9 @@ class SpeechRecognizer {
                     audioSession.requestRecordPermission { granted in
                         DispatchQueue.main.async {
                             if granted {
-                                promise(.success(true))
+                                promise(.success(.granted))
                             } else {
-                                promise(.success(false))
+                                promise(.success(.undetermined))
                                 self?.errorSubject.send("Estado de autorización desconocido.")
                                 
                             }
@@ -82,16 +85,13 @@ class SpeechRecognizer {
                     }
                 case .denied:
                     // El permiso ha sido denegado previamente
-                    promise(.success(false))
+                    promise(.success(.denied))
                     self?.errorSubject.send("Estado de autorización desconocido.")
                     
                 case .granted:
                     // El permiso ya ha sido concedido
-                    promise(.success(true))
+                    promise(.success(.granted))
                     
-                @unknown default:
-                    promise(.success(false))
-                    self?.errorSubject.send("Estado de autorización desconocido.")
                     
                 }
             }

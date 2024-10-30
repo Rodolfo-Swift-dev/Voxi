@@ -13,7 +13,7 @@ import Speech
 final class SpeechViewModel: ObservableObject  {
     //publishers
     @Published var isSpeechAuthorized: SFSpeechRecognizerAuthorizationStatus = .notDetermined
-    @Published var isMicrophoneAuthorized: Bool = false
+    @Published var isMicrophoneAuthorized: AVAudioSession.RecordPermission = .undetermined
     @Published var errorMessage: String? = nil
     @Published var hasError: Bool = false
     
@@ -85,9 +85,9 @@ private var speechRecognizer = SpeechRecognizer()
             
         case .notDetermined:
             print("1")
-            if !isMicrophoneAuthorized {
+            if isMicrophoneAuthorized != .granted {
                 
-                speechRecognizer.authorizationState
+                speechRecognizer.authorizationSpeechState
                     .receive(on: DispatchQueue.main)
                     .flatMap { [weak self] isSpeechAuthorized -> AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> in
                         guard let self = self else {
@@ -109,9 +109,9 @@ private var speechRecognizer = SpeechRecognizer()
                             return Just(isSpeechAuthorized).eraseToAnyPublisher() // Devuelve directamente el estado de autorización del speech
                         }
                     }
-                    .flatMap { [weak self] speechStatus -> AnyPublisher<Bool, Never> in
+                    .flatMap { [weak self] speechStatus -> AnyPublisher<AVAudioSession.RecordPermission, Never> in
                         guard let self = self else {
-                            return Just(false).eraseToAnyPublisher()
+                            return Just(.undetermined).eraseToAnyPublisher()
                         }
                         
                         // Si speech está autorizado, solicitamos el permiso del micrófono
@@ -119,7 +119,7 @@ private var speechRecognizer = SpeechRecognizer()
                             return self.speechRecognizer.authorizationMicrophonePublisher
                                 .eraseToAnyPublisher()
                         } else {
-                            return Just(false).eraseToAnyPublisher()
+                            return Just(AVAudioSession.RecordPermission.undetermined).eraseToAnyPublisher()
                         }
                     }
                     .sink { [weak self] isMicrophoneAuthorized in
@@ -127,7 +127,7 @@ private var speechRecognizer = SpeechRecognizer()
                         // Guardamos el valor del micrófono como booleano
                         self.isMicrophoneAuthorized = isMicrophoneAuthorized
                         print("Microphone authorization: \(isMicrophoneAuthorized)")
-                        if self.isSpeechAuthorized == .authorized && self.isMicrophoneAuthorized {
+                        if self.isSpeechAuthorized == .authorized && self.isMicrophoneAuthorized == .granted {
                             
                             speechRecognizer.startRecognition()
                             buttonText = "Detener analisis"
@@ -152,7 +152,7 @@ private var speechRecognizer = SpeechRecognizer()
             print("3")
             
         case .authorized:
-            if isMicrophoneAuthorized {
+            if isMicrophoneAuthorized == .granted {
                 print("4")
                 speechRecognizer.startRecognition()
                 buttonText = "Detener analisis"
@@ -168,7 +168,7 @@ private var speechRecognizer = SpeechRecognizer()
         }
     }
     private func updateToNotRunningState() {
-        if isSpeechAuthorized == .authorized && isMicrophoneAuthorized == true {
+        if isSpeechAuthorized == .authorized && isMicrophoneAuthorized == .granted {
             speechRecognizer.stopRecognition()
             buttonText = "Iniciar análisis"
             buttonColor = .green
