@@ -40,11 +40,13 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
-                if showSaveDeleteOptions {
+                switch viewModel.buttonViewState {
+                    
+                case .isButtonsSaveDeleteAppear:
                     HStack(spacing: 16) {
                         Button(action: {
                             viewModel.saveTranscription()
-                            showSaveDeleteOptions = false
+                            viewModel.buttonViewState = .isButtonsSaveDeleteDisappier
                         }) {
                             HStack{
                                 Image(systemName: "checkmark.circle.fill")
@@ -60,7 +62,7 @@ struct ContentView: View {
                         
                         Button(action: {
                             viewModel.recognizedText = ""
-                            showSaveDeleteOptions = false
+                            viewModel.buttonViewState = .isButtonsSaveDeleteDisappier
                         }) {
                             HStack{
                                 Image(systemName: "trash.fill")
@@ -76,9 +78,8 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top)
-                } else {
                     
-                    
+                case .isButtonsSaveDeleteDisappier:
                     Button(action: {
                         self.viewModel.buttonTapped()
                     }) {

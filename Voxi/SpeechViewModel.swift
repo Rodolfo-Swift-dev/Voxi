@@ -16,7 +16,9 @@ final class SpeechViewModel: ObservableObject  {
     @Published var isMicrophoneAuthorized: AVAudioSession.RecordPermission = .undetermined
     @Published var errorMessage: String? = nil
     @Published var hasError: Bool = false
+    
     @Published var recognizedText: String = ""
+    @Published var buttonViewState: ViewState = .isButtonsSaveDeleteDisappier
     
     //UI
     @Published var placeholderText: String = ""
@@ -24,6 +26,7 @@ final class SpeechViewModel: ObservableObject  {
     @Published var buttonColor: Color = .green
     @Published var buttonImageName: String = "mic.fill"
     @Published var navigationLinkOpacity: Double = 1
+    
     
     
 private var speechRecognizer = SpeechRecognizer()
@@ -47,7 +50,7 @@ private var speechRecognizer = SpeechRecognizer()
     }
         
     func saveTranscription() {
-        
+        recognizedText = ""
     }
     func buttonTapped() {
         stateButton = stateButton ? false : true
@@ -142,6 +145,7 @@ private var speechRecognizer = SpeechRecognizer()
                             buttonImageName = "stop.fill"
                             navigationLinkOpacity = 0
                             placeholderText = "Escuchando"
+                            buttonViewState = .isButtonsSaveDeleteDisappier
                             
                         } else {
                             
@@ -168,6 +172,7 @@ private var speechRecognizer = SpeechRecognizer()
                 buttonImageName = "stop.fill"
                 navigationLinkOpacity = 0
                 placeholderText = "Escuchando"
+                buttonViewState = .isButtonsSaveDeleteDisappier
                 
             } else {
                 showMicrophonePermissionAlert()
@@ -180,13 +185,17 @@ private var speechRecognizer = SpeechRecognizer()
     private func updateToNotRunningState() {
         if isSpeechAuthorized == .authorized && isMicrophoneAuthorized == .granted {
             speechRecognizer.stopRecognition()
-            recognizedText = ""
+            
             buttonText = "Iniciar análisis"
             buttonColor = .green
             buttonImageName = "mic.fill"
             navigationLinkOpacity = 1
             placeholderText = ""
-            
+            if !recognizedText.isEmpty {
+                buttonViewState = .isButtonsSaveDeleteAppear
+            } else {
+                buttonViewState = .isButtonsSaveDeleteDisappier
+            }
         }
     }
     

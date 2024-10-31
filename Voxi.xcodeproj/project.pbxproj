@@ -14,6 +14,7 @@
 		E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */; };
 		E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */; };
 		E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */; };
+		E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F805CB2CD4434400DF35BA /* ViewState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewModel.swift; sourceTree = "<group>"; };
 		E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
+		E7F805CB2CD4434400DF35BA /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */,
 				E7015C222CB77DD2006D8A2A /* Assets.xcassets */,
 				E7015C242CB77DD2006D8A2A /* Preview Content */,
+				E7F805CB2CD4434400DF35BA /* ViewState.swift */,
 			);
 			path = Voxi;
 			sourceTree = "<group>";
@@ -148,6 +151,7 @@
 			files = (
 				E7015C212CB77DD2006D8A2A /* ContentView.swift in Sources */,
 				E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */,
+				E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */,
 				E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */,
 				E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */,
 				E7015C1F2CB77DD2006D8A2A /* VoxiApp.swift in Sources */,
