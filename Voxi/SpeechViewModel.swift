@@ -16,14 +16,14 @@ final class SpeechViewModel: ObservableObject  {
     @Published var isMicrophoneAuthorized: AVAudioSession.RecordPermission = .undetermined
     @Published var errorMessage: String? = nil
     @Published var hasError: Bool = false
+    @Published var recognizedText: String = ""
     
     //UI
-    @Published var recognizedText: String = ""
+    @Published var placeholderText: String = ""
     @Published var buttonText: String = "Iniciar análisis"
     @Published var buttonColor: Color = .green
     @Published var buttonImageName: String = "mic.fill"
     @Published var navigationLinkOpacity: Double = 1
-    @Published var buttonValue: Bool = false
     
     
 private var speechRecognizer = SpeechRecognizer()
@@ -55,10 +55,18 @@ private var speechRecognizer = SpeechRecognizer()
     
     private func bindToSpeechRecognizer() {
         
+        
+        
         speechRecognizer.recognitionTextPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] text in
-                self?.recognizedText = text
+                guard let self = self else {
+                    return
+                }
+                self.placeholderText = ""
+                self.recognizedText = text
+                
+                
             }
             .store(in: &cancellables)
         
@@ -133,11 +141,12 @@ private var speechRecognizer = SpeechRecognizer()
                             buttonColor = .red
                             buttonImageName = "stop.fill"
                             navigationLinkOpacity = 0
+                            placeholderText = "Escuchando"
                             
                         } else {
-                            self.buttonValue = false
+                            
                             showMicrophonePermissionAlert()
-                            print("is anañizing \(buttonValue)")
+                            
                         }
                     }
                     .store(in: &cancellables)
@@ -158,6 +167,8 @@ private var speechRecognizer = SpeechRecognizer()
                 buttonColor = .red
                 buttonImageName = "stop.fill"
                 navigationLinkOpacity = 0
+                placeholderText = "Escuchando"
+                
             } else {
                 showMicrophonePermissionAlert()
             }
@@ -169,10 +180,13 @@ private var speechRecognizer = SpeechRecognizer()
     private func updateToNotRunningState() {
         if isSpeechAuthorized == .authorized && isMicrophoneAuthorized == .granted {
             speechRecognizer.stopRecognition()
+            recognizedText = ""
             buttonText = "Iniciar análisis"
             buttonColor = .green
             buttonImageName = "mic.fill"
             navigationLinkOpacity = 1
+            placeholderText = ""
+            
         }
     }
     
@@ -185,7 +199,7 @@ private var speechRecognizer = SpeechRecognizer()
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in
-            self.buttonValue = false
+            
         }))
         
         alert.addAction(UIAlertAction(title: "Ajustes", style: .default, handler: { _ in
@@ -209,7 +223,7 @@ private var speechRecognizer = SpeechRecognizer()
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in
-            self.buttonValue = false
+           
         }))
         
         alert.addAction(UIAlertAction(title: "Ajustes", style: .default, handler: { _ in

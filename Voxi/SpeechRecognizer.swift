@@ -17,23 +17,9 @@ class SpeechRecognizer {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     
-    
-    
-    var recognitionTextPublisher: some Publisher<String, Never> {
-        recognitionTextSubject.eraseToAnyPublisher()
-    }
-    var errorPublisher: some Publisher<String?, Never> {
-        errorSubject.eraseToAnyPublisher()
-    }
-    var authorizationSpeechState: some Publisher<SFSpeechRecognizerAuthorizationStatus, Never> {
-        authorizationSpeechPublisher.eraseToAnyPublisher()
-    }
-    var authorizationMicroState: some Publisher<AVAudioSession.RecordPermission, Never> {
-        authorizationMicrophonePublisher.eraseToAnyPublisher()
-    }
-    
     private let recognitionTextSubject = PassthroughSubject<String, Never>()
     private let errorSubject = PassthroughSubject<String?, Never>()
+    
     private var authorizationSpeechPublisher: AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> {
         return Deferred {
             Future { [weak self] promise in
@@ -99,6 +85,19 @@ class SpeechRecognizer {
             
         }
         .eraseToAnyPublisher()  // Convertimos a AnyPublisher
+    }
+    
+    var recognitionTextPublisher: some Publisher<String, Never> {
+        recognitionTextSubject.eraseToAnyPublisher()
+    }
+    var errorPublisher: some Publisher<String?, Never> {
+        errorSubject.eraseToAnyPublisher()
+    }
+    var authorizationSpeechState: some Publisher<SFSpeechRecognizerAuthorizationStatus, Never> {
+        authorizationSpeechPublisher.eraseToAnyPublisher()
+    }
+    var authorizationMicroState: some Publisher<AVAudioSession.RecordPermission, Never> {
+        authorizationMicrophonePublisher.eraseToAnyPublisher()
     }
     
     func startRecognition() {

@@ -28,12 +28,12 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
                     //codigo para implementar cuando esten las transcripciones
-                    if viewModel.recognizedText.isEmpty && viewModel.buttonValue {
-                        Text("Escuchando")
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 12)
-                    }
+                    
+                    Text(viewModel.placeholderText)
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                    
                     Text(viewModel.recognizedText)
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
