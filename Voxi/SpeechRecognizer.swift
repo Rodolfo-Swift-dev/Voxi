@@ -64,7 +64,7 @@ class SpeechRecognizer {
         .eraseToAnyPublisher()  // Convertimos a AnyPublisher
     }
     
-    var authorizationMicrophonePublisher: AnyPublisher<AVAudioSession.RecordPermission, Never> {
+    private var authorizationMicrophonePublisher: AnyPublisher<AVAudioSession.RecordPermission, Never> {
         return Future { [weak self] promise in
             let audioSession = AVAudioSession.sharedInstance()
             

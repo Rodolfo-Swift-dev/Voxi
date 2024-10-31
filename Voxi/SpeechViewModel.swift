@@ -46,6 +46,12 @@ private var speechRecognizer = SpeechRecognizer()
         bindToSpeechRecognizer()
     }
         
+    func saveTranscription() {
+        
+    }
+    func buttonTapped() {
+        stateButton = stateButton ? false : true
+    }
     
     private func bindToSpeechRecognizer() {
         
@@ -70,13 +76,6 @@ private var speechRecognizer = SpeechRecognizer()
         
         
         
-    }
-    
-    func saveTranscription() {
-        
-    }
-    func buttonTapped() {
-        stateButton = stateButton ? false : true
     }
     
     private func updateRunningState() {
@@ -116,7 +115,7 @@ private var speechRecognizer = SpeechRecognizer()
                         
                         // Si speech está autorizado, solicitamos el permiso del micrófono
                         if speechStatus == .authorized {
-                            return self.speechRecognizer.authorizationMicrophonePublisher
+                            return self.speechRecognizer.authorizationMicroState
                                 .eraseToAnyPublisher()
                         } else {
                             return Just(AVAudioSession.RecordPermission.undetermined).eraseToAnyPublisher()
@@ -179,7 +178,7 @@ private var speechRecognizer = SpeechRecognizer()
     
     
     
-    func showSpeechPermissionAlert() {
+    private func showSpeechPermissionAlert() {
         // Mostrar una alerta para que el usuario vaya a Ajustes
         let alert = UIAlertController(title: "Permiso de reconocimiento de voz requerido",
                                       message: "Por favor, habilita el permiso en Ajustes para usar reconocimiento de voz.",
@@ -203,7 +202,7 @@ private var speechRecognizer = SpeechRecognizer()
             rootViewController.present(alert, animated: true)
         }
     }
-    func showMicrophonePermissionAlert() {
+    private func showMicrophonePermissionAlert() {
         // Mostrar una alerta para que el usuario vaya a Ajustes
         let alert = UIAlertController(title: "Permiso de micrófono requerido",
                                       message: "Por favor, habilita el permiso en Ajustes para usar el micrófono.",
