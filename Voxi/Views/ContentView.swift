@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showSaveDeleteOptions = false
-    @StateObject var viewModel = SpeechViewModel()
+    
+    // Accede al `SpeechViewModel` desde el entorno, lo que permite utilizar sus datos y funciones.
+    @EnvironmentObject var viewModel: SpeechViewModel
+    
+    //@StateObject var viewModel = SpeechViewModel()
     
     /*
      @StateObject var viewModel: SpeechViewModel
@@ -112,5 +115,5 @@ struct ContentView: View {
     }
 }
 #Preview {
-    ContentView(viewModel: SpeechViewModel())
+    ContentView()
 }

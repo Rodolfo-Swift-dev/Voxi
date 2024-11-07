@@ -12,9 +12,13 @@
 		E7015C232CB77DD2006D8A2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7015C222CB77DD2006D8A2A /* Assets.xcassets */; };
 		E7015C262CB77DD2006D8A2A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7015C252CB77DD2006D8A2A /* Preview Assets.xcassets */; };
 		E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */; };
+		E7B00C5A2CD7245D006AC47E /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B00C592CD7245D006AC47E /* NoteView.swift */; };
+		E7B00C5C2CD725BA006AC47E /* AllNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */; };
 		E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */; };
 		E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */; };
 		E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F805CB2CD4434400DF35BA /* ViewState.swift */; };
+		E7F805CE2CD44D2800DF35BA /* TextAnalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F805CD2CD44D2800DF35BA /* TextAnalizer.swift */; };
+		E7FE34142CDAEBBE005444CD /* speechRecognizerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,9 +28,13 @@
 		E7015C222CB77DD2006D8A2A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7015C252CB77DD2006D8A2A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewModel.swift; sourceTree = "<group>"; };
+		E7B00C592CD7245D006AC47E /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
+		E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNotesView.swift; sourceTree = "<group>"; };
 		E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 		E7F805CB2CD4434400DF35BA /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
+		E7F805CD2CD44D2800DF35BA /* TextAnalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextAnalizer.swift; sourceTree = "<group>"; };
+		E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = speechRecognizerState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,13 +68,12 @@
 			isa = PBXGroup;
 			children = (
 				E7015C1E2CB77DD2006D8A2A /* VoxiApp.swift */,
-				E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */,
-				E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */,
-				E7015C202CB77DD2006D8A2A /* ContentView.swift */,
-				E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */,
+				E7F805CF2CD44D4600DF35BA /* Models */,
+				E7F805D02CD44D5B00DF35BA /* ViewModels */,
+				E7F805D12CD44D6400DF35BA /* Views */,
+				E7F805D22CD44D9500DF35BA /* Entities */,
 				E7015C222CB77DD2006D8A2A /* Assets.xcassets */,
 				E7015C242CB77DD2006D8A2A /* Preview Content */,
-				E7F805CB2CD4434400DF35BA /* ViewState.swift */,
 			);
 			path = Voxi;
 			sourceTree = "<group>";
@@ -77,6 +84,43 @@
 				E7015C252CB77DD2006D8A2A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		E7F805CF2CD44D4600DF35BA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */,
+				E7F805CD2CD44D2800DF35BA /* TextAnalizer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E7F805D02CD44D5B00DF35BA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E7F805D12CD44D6400DF35BA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E7015C202CB77DD2006D8A2A /* ContentView.swift */,
+				E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */,
+				E7B00C592CD7245D006AC47E /* NoteView.swift */,
+				E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E7F805D22CD44D9500DF35BA /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				E7F805CB2CD4434400DF35BA /* ViewState.swift */,
+				E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */,
+			);
+			path = Entities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,9 +195,13 @@
 			files = (
 				E7015C212CB77DD2006D8A2A /* ContentView.swift in Sources */,
 				E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */,
+				E7B00C5A2CD7245D006AC47E /* NoteView.swift in Sources */,
 				E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */,
 				E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */,
+				E7FE34142CDAEBBE005444CD /* speechRecognizerState.swift in Sources */,
 				E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */,
+				E7B00C5C2CD725BA006AC47E /* AllNotesView.swift in Sources */,
+				E7F805CE2CD44D2800DF35BA /* TextAnalizer.swift in Sources */,
 				E7015C1F2CB77DD2006D8A2A /* VoxiApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

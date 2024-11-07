@@ -27,9 +27,20 @@ final class SpeechViewModel: ObservableObject  {
     @Published var buttonImageName: String = "mic.fill"
     @Published var navigationLinkOpacity: Double = 1
     
+    @Published var sentimenText: String = ""
+    
+    @Published var categories: [String] = []
+    // Lista de categorías personalizadas para clasificar las transcripciones.
+    let customCategories: [String] = ["Trabajo", "Personal", "Salud", "Finanzas", "Educación"]
+    @Published var totalCategories: [String] = []
+
+    // Array que almacena las transcripciones con su texto, análisis de sentimiento y categorías asociadas.
+    @Published var transcriptions: [(text: String, sentiment: String, categories: [String])] = []
     
     
-private var speechRecognizer = SpeechRecognizer()
+    
+    private var speechRecognizer = SpeechRecognizer()
+    private var textAnalizer = TextAnalyzer()
     private var cancellables = Set<AnyCancellable>()
     
     private var stateButton: Bool = false {
@@ -47,11 +58,46 @@ private var speechRecognizer = SpeechRecognizer()
     init() {
         
         bindToSpeechRecognizer()
+        totalCategories = customCategories + categories
     }
         
     func saveTranscription() {
-        recognizedText = ""
+        
+        if !recognizedText.isEmpty {
+            textAnalizer.text = recognizedText
+            textAnalizer.categories = totalCategories
+            
+            // Analiza el sentimiento del texto de la transcripción.
+            textAnalizer.analyzeSentimentPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] sentiment in
+                    guard let self = self else {
+                        return
+                    }
+                    self.sentimenText = sentiment
+                    print(sentiment)
+                }
+                .store(in: &cancellables)
+            
+            // Categoriza el texto utilizando las categorías personalizadas.
+            textAnalizer.categorizeTextPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] categorie in
+                    guard let self = self else {
+                        return
+                    }
+                    print(categorie)
+                    
+                }
+                .store(in: &cancellables)
+            
+            // Almacena la transcripción con su sentimiento y categorías.
+            transcriptions.append((text: recognizedText, sentiment: sentimenText, categories: categories))
+            // Limpia la transcripción actual después de guardarla.
+            recognizedText = ""
+        }
     }
+    
     func buttonTapped() {
         stateButton = stateButton ? false : true
     }
@@ -63,11 +109,13 @@ private var speechRecognizer = SpeechRecognizer()
         speechRecognizer.recognitionTextPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] text in
+                
                 guard let self = self else {
                     return
                 }
-                self.placeholderText = ""
-                self.recognizedText = text
+                placeholderText = ""
+                recognizedText = text
+                
                 
                 
             }
@@ -94,14 +142,14 @@ private var speechRecognizer = SpeechRecognizer()
         switch isSpeechAuthorized {
             
         case .notDetermined:
-            print("1")
+            
             if isMicrophoneAuthorized != .granted {
                 
                 speechRecognizer.authorizationSpeechState
                     .receive(on: DispatchQueue.main)
                     .flatMap { [weak self] isSpeechAuthorized -> AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> in
                         guard let self = self else {
-                            print("aqui")
+                            
                             return Just(.notDetermined).eraseToAnyPublisher() // Si no existe el self, devuelves un valor por defecto
                            
                         }
@@ -109,13 +157,10 @@ private var speechRecognizer = SpeechRecognizer()
                         // Asignamos el valor de la autorización de Speech
                         self.isSpeechAuthorized = isSpeechAuthorized
                         
-                        print("Speech authorization: \(isSpeechAuthorized)")
-
                         if isSpeechAuthorized == .authorized {
                             // Devuelve el estado de autorización del speech para continuar la cadena de publishers
                             return Just(isSpeechAuthorized).eraseToAnyPublisher()
                         } else {
-                            print("aqui siiiiii")
                             return Just(isSpeechAuthorized).eraseToAnyPublisher() // Devuelve directamente el estado de autorización del speech
                         }
                     }
@@ -136,7 +181,6 @@ private var speechRecognizer = SpeechRecognizer()
                         guard let self = self else { return }
                         // Guardamos el valor del micrófono como booleano
                         self.isMicrophoneAuthorized = isMicrophoneAuthorized
-                        print("Microphone authorization: \(isMicrophoneAuthorized)")
                         if self.isSpeechAuthorized == .authorized && self.isMicrophoneAuthorized == .granted {
                             
                             speechRecognizer.startRecognition()
@@ -157,15 +201,15 @@ private var speechRecognizer = SpeechRecognizer()
             }
             
         case .denied:
-            print("2")
+            
             showSpeechPermissionAlert()
             
         case .restricted:
-            print("3")
+            print("restricted")
             
         case .authorized:
             if isMicrophoneAuthorized == .granted {
-                print("4")
+                
                 speechRecognizer.startRecognition()
                 buttonText = "Detener analisis"
                 buttonColor = .red
@@ -179,7 +223,7 @@ private var speechRecognizer = SpeechRecognizer()
             }
             
         @unknown default:
-            print("4")
+            print("unknown")
         }
     }
     private func updateToNotRunningState() {

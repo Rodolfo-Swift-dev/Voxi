@@ -16,37 +16,38 @@ class SpeechRecognizer {
     private let audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
+    private var accumulatedText = ""
+    private var lastTranscription = ""
     
     private let recognitionTextSubject = PassthroughSubject<String, Never>()
     private let errorSubject = PassthroughSubject<String?, Never>()
     
     private var authorizationSpeechPublisher: AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> {
-        return Deferred {
-            Future { [weak self] promise in
+        return Future { [weak self] promise in
                 SFSpeechRecognizer.requestAuthorization { status in
                     DispatchQueue.main.async {
                         SFSpeechRecognizer.authorizationStatus()
                         switch status {
                         case .authorized:
                             promise(.success(.authorized))  // Permiso concedido
-                            print("Authorized")
+                            
                         case .denied:
                             promise(.success(.denied))  // Permiso denegado
                             self?.errorSubject.send("Acceso o restringido.")
-                            print("denied")
+                            
                         case .restricted, .notDetermined:
                             promise(.success(.restricted))  // Permiso denegado
                             self?.errorSubject.send("Acceso o restringido.")
-                            print("restricted")
+                            
                         @unknown default:
                             promise(.success(.notDetermined))
                             self?.errorSubject.send("Estado de autorización desconocido.")
-                            print("Uknown")
+                            
                         }
                     }
                 }
             }
-        }
+        
         .eraseToAnyPublisher()  // Convertimos a AnyPublisher
     }
     
@@ -100,6 +101,7 @@ class SpeechRecognizer {
         authorizationMicrophonePublisher.eraseToAnyPublisher()
     }
     
+    
     func startRecognition() {
         
         guard audioEngine.isRunning == false else {return}
@@ -135,23 +137,54 @@ class SpeechRecognizer {
         // Configuramos la solicitud para que informe los resultados parciales
         recognitionRequest.shouldReportPartialResults = true
         
+        
+        
         // Creamos la tarea de reconocimiento, pasando la solicitud y un manejador de resultados
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] result, error in
-            // Si obtenemos un resultado, publicamos la transcripción parcial o completa a través del speechResultPublisher
-            if let result = result {
-                DispatchQueue.main.async {
-                    // Publicamos la mejor transcripción obtenida (formattedString) al subscriber del publisher
-                    // Esto asegura que cualquier suscriptor reciba el texto reconocido
-                    self?.recognitionTextSubject.send(result.bestTranscription.formattedString)
-                }
-            }
-            // Si hay un error o el resultado es final, detenemos el motor de audio y limpiamos las solicitudes y tareas
-            if error != nil || result?.isFinal == true {
-                self?.stopRecognition()
-            }
+            
+            guard let self = self else { return }
+            
+            
+                    if let result = result {
+                    
+
+                       
+                        let actualTranscription = result.bestTranscription.formattedString.lowercased()
+                         
+                            print("lastTranscription: \(lastTranscription).")
+                            print("actualTranscription: \(actualTranscription).")
+                            
+                        if lastTranscription.split(separator: " ").count != actualTranscription.split(separator: " ").count {
+                                
+                                    self.accumulatedText += getNewText(fullText: actualTranscription, previousText: lastTranscription) + " "
+                                    self.lastTranscription = actualTranscription
+                                    self.recognitionTextSubject.send(self.accumulatedText)
+                                
+                        } else if (lastTranscription.split(separator: " ").count == actualTranscription.split(separator: " ").count) && (lastTranscription != actualTranscription) {
+                            
+                            if let lastWordTranscription = actualTranscription.split(separator: " ").last,
+                               let lastWordAccumulated = accumulatedText.split(separator: " ").last {
+                                
+                                accumulatedText = self.accumulatedText.replacingOccurrences(of: lastWordAccumulated.description, with: lastWordTranscription.description)
+                                self.lastTranscription = actualTranscription
+                                self.recognitionTextSubject.send(self.accumulatedText)
+                            }
+                        } else if lastTranscription == actualTranscription {
+                                
+                                    self.lastTranscription = ""
+                        }
+                        
+                        
+                        
+                    }
+            
+            
+            
+            
+            
             
             if let error = error {
-                self?.errorSubject.send("Error durante el reconocimiento: \(error.localizedDescription)")
+                self.errorSubject.send("Error durante el reconocimiento: \(error.localizedDescription)")
             }
         })
         
@@ -175,7 +208,8 @@ class SpeechRecognizer {
     }
     
     func stopRecognition() {
-        
+        lastTranscription = ""
+        accumulatedText = ""
         // Detenemos el motor de audio
         audioEngine.stop()
         // Finalizamos el flujo de audio de la solicitud de reconocimiento
@@ -196,6 +230,19 @@ class SpeechRecognizer {
         } catch {
             errorSubject.send("No se pudo desactivar la sesión de audio.")
         }
+    }
+    // Helper function to find new text
+    func getNewText(fullText: String, previousText: String) -> String {
+        // Split both strings into words
+        let fullWords = fullText.split(separator: " ")
+        let previousWords = previousText.split(separator: " ")
+        
+        // Verificar que el índice esté dentro de los límites
+        let startIndex = min(previousWords.count, fullWords.count)
+        let newWords = fullWords.suffix(from: startIndex)
+        print("execute ")
+        // Join new words into a single string with spaces
+        return newWords.joined(separator: " ").lowercased()
     }
     
 }
