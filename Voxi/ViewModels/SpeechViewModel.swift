@@ -39,12 +39,14 @@ final class SpeechViewModel: ObservableObject  {
     
     
     
+    
     private var speechRecognizer = SpeechRecognizer()
     private var textAnalizer = TextAnalyzer()
     private var cancellables = Set<AnyCancellable>()
     
     private var stateButton: Bool = false {
         didSet {
+            print(stateButton.description)
             switch stateButton {
                 
             case true:
@@ -75,7 +77,7 @@ final class SpeechViewModel: ObservableObject  {
                         return
                     }
                     self.sentimenText = sentiment
-                    print(sentiment)
+                    
                 }
                 .store(in: &cancellables)
             
@@ -86,7 +88,7 @@ final class SpeechViewModel: ObservableObject  {
                     guard let self = self else {
                         return
                     }
-                    print(categorie)
+                   
                     
                 }
                 .store(in: &cancellables)
@@ -147,7 +149,7 @@ final class SpeechViewModel: ObservableObject  {
                 
                 speechRecognizer.authorizationSpeechState
                     .receive(on: DispatchQueue.main)
-                    .flatMap { [weak self] isSpeechAuthorized -> AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> in
+                    .flatMap { [weak self] isSpeechStatus -> AnyPublisher<SFSpeechRecognizerAuthorizationStatus, Never> in
                         guard let self = self else {
                             
                             return Just(.notDetermined).eraseToAnyPublisher() // Si no existe el self, devuelves un valor por defecto
@@ -155,13 +157,15 @@ final class SpeechViewModel: ObservableObject  {
                         }
 
                         // Asignamos el valor de la autorización de Speech
-                        self.isSpeechAuthorized = isSpeechAuthorized
+                        self.isSpeechAuthorized = isSpeechStatus
                         
-                        if isSpeechAuthorized == .authorized {
+                        if isSpeechStatus == .authorized {
+                            print("authorized")
                             // Devuelve el estado de autorización del speech para continuar la cadena de publishers
-                            return Just(isSpeechAuthorized).eraseToAnyPublisher()
+                            return Just(isSpeechStatus).eraseToAnyPublisher()
                         } else {
-                            return Just(isSpeechAuthorized).eraseToAnyPublisher() // Devuelve directamente el estado de autorización del speech
+                            print("Not authorized")
+                            return Just(isSpeechStatus).eraseToAnyPublisher() // Devuelve directamente el estado de autorización del speech
                         }
                     }
                     .flatMap { [weak self] speechStatus -> AnyPublisher<AVAudioSession.RecordPermission, Never> in
@@ -171,30 +175,36 @@ final class SpeechViewModel: ObservableObject  {
                         
                         // Si speech está autorizado, solicitamos el permiso del micrófono
                         if speechStatus == .authorized {
+                            print("debe estar autorizado")
                             return self.speechRecognizer.authorizationMicroState
                                 .eraseToAnyPublisher()
                         } else {
+                            print("no debe estar autorizado")
                             return Just(AVAudioSession.RecordPermission.undetermined).eraseToAnyPublisher()
                         }
                     }
-                    .sink { [weak self] isMicrophoneAuthorized in
+                    .sink { [weak self] isMicrophoneStatus in
                         guard let self = self else { return }
-                        // Guardamos el valor del micrófono como booleano
-                        self.isMicrophoneAuthorized = isMicrophoneAuthorized
-                        if self.isSpeechAuthorized == .authorized && self.isMicrophoneAuthorized == .granted {
-                            
-                            speechRecognizer.startRecognition()
-                            buttonText = "Detener analisis"
-                            buttonColor = .red
-                            buttonImageName = "stop.fill"
-                            navigationLinkOpacity = 0
-                            placeholderText = "Escuchando"
-                            buttonViewState = .isButtonsSaveDeleteDisappier
-                            
+                        if isSpeechAuthorized == .authorized {
+                            // Guardamos el valor del micrófono como booleano
+                            self.isMicrophoneAuthorized = isMicrophoneStatus
+                            if self.isMicrophoneAuthorized == .granted {
+                                
+                                speechRecognizer.startRecognition()
+                                buttonText = "Detener analisis"
+                                buttonColor = .red
+                                buttonImageName = "stop.fill"
+                                navigationLinkOpacity = 0
+                                placeholderText = "Escuchando"
+                                buttonViewState = .isButtonsSaveDeleteDisappier
+                                
+                            } else {
+                                
+                                showMicrophonePermissionAlert()
+                                
+                            }
                         } else {
-                            
-                            showMicrophonePermissionAlert()
-                            
+                            showSpeechPermissionAlert()
                         }
                     }
                     .store(in: &cancellables)
@@ -252,7 +262,7 @@ final class SpeechViewModel: ObservableObject  {
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in
-            
+            self.stateButton = false
         }))
         
         alert.addAction(UIAlertAction(title: "Ajustes", style: .default, handler: { _ in
@@ -276,7 +286,7 @@ final class SpeechViewModel: ObservableObject  {
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in
-           
+            self.stateButton = false
         }))
         
         alert.addAction(UIAlertAction(title: "Ajustes", style: .default, handler: { _ in

@@ -18,7 +18,6 @@
 		E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */; };
 		E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F805CB2CD4434400DF35BA /* ViewState.swift */; };
 		E7F805CE2CD44D2800DF35BA /* TextAnalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F805CD2CD44D2800DF35BA /* TextAnalizer.swift */; };
-		E7FE34142CDAEBBE005444CD /* speechRecognizerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +33,6 @@
 		E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 		E7F805CB2CD4434400DF35BA /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		E7F805CD2CD44D2800DF35BA /* TextAnalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextAnalizer.swift; sourceTree = "<group>"; };
-		E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = speechRecognizerState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				E7F805CB2CD4434400DF35BA /* ViewState.swift */,
-				E7FE34132CDAEBBE005444CD /* speechRecognizerState.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -198,7 +195,6 @@
 				E7B00C5A2CD7245D006AC47E /* NoteView.swift in Sources */,
 				E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */,
 				E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */,
-				E7FE34142CDAEBBE005444CD /* speechRecognizerState.swift in Sources */,
 				E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */,
 				E7B00C5C2CD725BA006AC47E /* AllNotesView.swift in Sources */,
 				E7F805CE2CD44D2800DF35BA /* TextAnalizer.swift in Sources */,

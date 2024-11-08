@@ -43,6 +43,7 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
+                
                 switch viewModel.buttonViewState {
                     
                 case .isButtonsSaveDeleteAppear:
@@ -109,7 +110,6 @@ struct ContentView: View {
                     }
                 }
             }
-            
             .navigationTitle("Transcripción")
         }
     }
