@@ -200,11 +200,12 @@ final class SpeechViewModel: ObservableObject  {
                                 
                             } else {
                                 
-                                showMicrophonePermissionAlert()
+                                showPermissionAlert(title: "Permiso de micrófono requerido", message: "Por favor, habilita el permiso en Ajustes para usar el micrófono.")
                                 
                             }
                         } else {
-                            showSpeechPermissionAlert()
+                            
+                            showPermissionAlert(title: "Permiso de reconocimiento de voz requerido", message: "Por favor, habilita el permiso en Ajustes para usar reconocimiento de voz.")
                         }
                     }
                     .store(in: &cancellables)
@@ -212,7 +213,8 @@ final class SpeechViewModel: ObservableObject  {
             
         case .denied:
             
-            showSpeechPermissionAlert()
+            
+            showPermissionAlert(title: "Permiso de reconocimiento de voz requerido", message: "Por favor, habilita el permiso en Ajustes para usar reconocimiento de voz.")
             
         case .restricted:
             print("restricted")
@@ -229,7 +231,7 @@ final class SpeechViewModel: ObservableObject  {
                 buttonViewState = .isButtonsSaveDeleteDisappier
                 
             } else {
-                showMicrophonePermissionAlert()
+                showPermissionAlert(title: "Permiso de micrófono requerido", message: "Por favor, habilita el permiso en Ajustes para usar el micrófono.")
             }
             
         @unknown default:
@@ -254,11 +256,10 @@ final class SpeechViewModel: ObservableObject  {
     }
     
     
-    
-    private func showSpeechPermissionAlert() {
+    private func showPermissionAlert(title: String, message: String) {
         // Mostrar una alerta para que el usuario vaya a Ajustes
-        let alert = UIAlertController(title: "Permiso de reconocimiento de voz requerido",
-                                      message: "Por favor, habilita el permiso en Ajustes para usar reconocimiento de voz.",
+        let alert = UIAlertController(title: title,
+                                      message: message,
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: { _ in
@@ -279,28 +280,6 @@ final class SpeechViewModel: ObservableObject  {
             rootViewController.present(alert, animated: true)
         }
     }
-    private func showMicrophonePermissionAlert() {
-        // Mostrar una alerta para que el usuario vaya a Ajustes
-        let alert = UIAlertController(title: "Permiso de micrófono requerido",
-                                      message: "Por favor, habilita el permiso en Ajustes para usar el micrófono.",
-                                      preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {_ in
-            self.stateButton = false
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Ajustes", style: .default, handler: { _ in
-            if let appSettings = URL(string: UIApplication.openSettingsURLString) {
-                if UIApplication.shared.canOpenURL(appSettings) {
-                    UIApplication.shared.open(appSettings)
-                }
-            }
-        }))
-        
-        // Presenta la alerta al usuario
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
-    }
+    
+    
 }
