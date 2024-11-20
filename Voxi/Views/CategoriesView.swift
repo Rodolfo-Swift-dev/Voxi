@@ -21,6 +21,8 @@ struct CategoriesView: View {
     // Estado para mostrar una confirmación cuando se agrega una nueva categoría.
     @State private var showingConfirmation = false
     
+    @State private var isCreatedCategory = false
+    
     // Computed property que genera una lista ordenada de categorías:
     // primero las predeterminadas y luego las personalizadas que no están en las predeterminadas.
     
@@ -63,7 +65,7 @@ struct CategoriesView: View {
             TextField("Nombre de la categoría", text: $newCategory)
             
             // Botón para confirmar la adición de la nueva categoría.
-            Button("Agregar", action: addNewCategory)
+            Button("Crear", action: addNewCategory)
             
             // Botón para cancelar y cerrar la alerta.
             Button("Cancelar", role: .cancel) {
@@ -73,10 +75,14 @@ struct CategoriesView: View {
             Text("Ingresa el nombre de la nueva categoría.")
         })
         // Alerta de confirmación cuando la categoría se agrega exitosamente.
-        .alert("Categoría agregada", isPresented: $showingConfirmation, actions: {
-            Button("OK", role: .cancel) { }
+        .alert(isCreatedCategory ? "Categoría creada" : "Categoria no creada", isPresented: $showingConfirmation, actions: {
+            Button("OK", role: .cancel) {
+                showingConfirmation = false
+                showingAlert = false
+                isCreatedCategory = false
+            }
         }, message: {
-            Text("La nueva categoría ha sido agregada exitosamente.")
+            Text(isCreatedCategory ? "La nueva categoría ha sido creada exitosamente." : "La categoria ya existe")
         })
         
         
@@ -85,16 +91,19 @@ struct CategoriesView: View {
     // Función para agregar una nueva categoría.
     private func addNewCategory() {
         // Verifica que el nombre de la nueva categoría no esté vacío y que no exista en las categorías personalizadas ni predeterminadas.
-        if !newCategory.isEmpty && !viewModel.customCategories.contains(newCategory) && !viewModel.addedCategories.contains(newCategory) {
+        if !newCategory.isEmpty && !viewModel.totalCategories.contains(newCategory) {
             // Agrega la nueva categoría al `speechViewModel`.
             
             // Agrega una nueva categoría a la lista de categorías personalizadas si no existe previamente.
             viewModel.addedCategories.append(newCategory)
+            viewModel.totalCategories = viewModel.customCategories + viewModel.addedCategories
             newCategory = "" // Limpia el campo de texto.
+            isCreatedCategory = true
             showingConfirmation = true // Muestra la alerta de confirmación.
         } else {
             newCategory = "" // Limpia el campo de texto en caso de que la categoría ya exista.
-            showingConfirmation = false // No muestra la alerta de confirmación.
+            isCreatedCategory = false
+            showingConfirmation = true // muestra la alerta de confirmación.
         }
     }
 }

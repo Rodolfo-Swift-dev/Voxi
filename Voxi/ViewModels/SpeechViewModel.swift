@@ -39,8 +39,6 @@ final class SpeechViewModel: ObservableObject  {
     @Published var transcriptions: [(text: String, sentiment: String, category: String)] = []
     
     
-    
-    
     private var speechRecognizer = SpeechRecognizer()
     private var textAnalizer = TextAnalyzer()
     private var cancellables = Set<AnyCancellable>()
@@ -65,6 +63,12 @@ final class SpeechViewModel: ObservableObject  {
         print(totalCategories)
     }
         
+    
+    
+    func buttonTapped() {
+        stateButton = stateButton ? false : true
+    }
+    
     func saveTranscription() {
         
         if !recognizedText.isEmpty {
@@ -99,10 +103,6 @@ final class SpeechViewModel: ObservableObject  {
             
             
         }
-    }
-    
-    func buttonTapped() {
-        stateButton = stateButton ? false : true
     }
     
     private func bindToSpeechRecognizer() {
@@ -239,6 +239,7 @@ final class SpeechViewModel: ObservableObject  {
             print("unknown")
         }
     }
+    
     private func updateToNotRunningState() {
         if isSpeechAuthorized == .authorized && isMicrophoneAuthorized == .granted {
             speechRecognizer.stopRecognition()
@@ -255,7 +256,6 @@ final class SpeechViewModel: ObservableObject  {
             }
         }
     }
-    
     
     private func categorizeText(_ text: String, categories: [String], completion: @escaping (String) -> Void)  {
             var textCategory = ""
@@ -282,7 +282,6 @@ final class SpeechViewModel: ObservableObject  {
 
         
     }
-    
     
     private func showPermissionAlert(title: String, message: String) {
         // Mostrar una alerta para que el usuario vaya a Ajustes
