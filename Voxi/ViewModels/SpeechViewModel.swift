@@ -29,13 +29,14 @@ final class SpeechViewModel: ObservableObject  {
     
     @Published var sentimenText: String = ""
     
-    @Published var categories: [String] = []
+    @Published var category: String = ""
+    @Published var addedCategories: [String] = []
     // Lista de categorías personalizadas para clasificar las transcripciones.
-    let customCategories: [String] = ["Trabajo", "Personal", "Salud", "Finanzas", "Educación"]
+    let customCategories: [String] = ["Trabajo", "Personal", "Salud", "Finanzas", "Educación", "Sin categoría"]
     @Published var totalCategories: [String] = []
 
     // Array que almacena las transcripciones con su texto, análisis de sentimiento y categorías asociadas.
-    @Published var transcriptions: [(text: String, sentiment: String, categories: [String])] = []
+    @Published var transcriptions: [(text: String, sentiment: String, category: String)] = []
     
     
     
@@ -46,7 +47,7 @@ final class SpeechViewModel: ObservableObject  {
     
     private var stateButton: Bool = false {
         didSet {
-            print(stateButton.description)
+            
             switch stateButton {
                 
             case true:
@@ -60,14 +61,15 @@ final class SpeechViewModel: ObservableObject  {
     init() {
         
         bindToSpeechRecognizer()
-        totalCategories = customCategories + categories
+        totalCategories = customCategories + addedCategories
+        print(totalCategories)
     }
         
     func saveTranscription() {
         
         if !recognizedText.isEmpty {
             textAnalizer.text = recognizedText
-            textAnalizer.categories = totalCategories
+            
             
             // Analiza el sentimiento del texto de la transcripción.
             textAnalizer.analyzeSentimentPublisher
@@ -77,26 +79,25 @@ final class SpeechViewModel: ObservableObject  {
                         return
                     }
                     self.sentimenText = sentiment
-                    
+                    print(sentiment)
                 }
                 .store(in: &cancellables)
             
-            // Categoriza el texto utilizando las categorías personalizadas.
-            textAnalizer.categorizeTextPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] categorie in
-                    guard let self = self else {
-                        return
-                    }
-                   
-                    
-                }
-                .store(in: &cancellables)
+            categorizeText(recognizedText, categories: totalCategories, completion: { category in
+                self.category = category
+                print(category)
+                print(self.recognizedText)
+                // Almacena la transcripción con su sentimiento y categorías.
+                self.transcriptions.append((text: self.recognizedText, sentiment: self.sentimenText, category: category))
+                // Limpia la transcripción actual después de guardarla.
+                self.recognizedText = ""
+            })
             
-            // Almacena la transcripción con su sentimiento y categorías.
-            transcriptions.append((text: recognizedText, sentiment: sentimenText, categories: categories))
-            // Limpia la transcripción actual después de guardarla.
-            recognizedText = ""
+            
+            
+            
+            
+            
         }
     }
     
@@ -160,11 +161,11 @@ final class SpeechViewModel: ObservableObject  {
                         self.isSpeechAuthorized = isSpeechStatus
                         
                         if isSpeechStatus == .authorized {
-                            print("authorized")
+                            
                             // Devuelve el estado de autorización del speech para continuar la cadena de publishers
                             return Just(isSpeechStatus).eraseToAnyPublisher()
                         } else {
-                            print("Not authorized")
+                            
                             return Just(isSpeechStatus).eraseToAnyPublisher() // Devuelve directamente el estado de autorización del speech
                         }
                     }
@@ -175,11 +176,11 @@ final class SpeechViewModel: ObservableObject  {
                         
                         // Si speech está autorizado, solicitamos el permiso del micrófono
                         if speechStatus == .authorized {
-                            print("debe estar autorizado")
+                            
                             return self.speechRecognizer.authorizationMicroState
                                 .eraseToAnyPublisher()
                         } else {
-                            print("no debe estar autorizado")
+                            
                             return Just(AVAudioSession.RecordPermission.undetermined).eraseToAnyPublisher()
                         }
                     }
@@ -253,6 +254,33 @@ final class SpeechViewModel: ObservableObject  {
                 buttonViewState = .isButtonsSaveDeleteDisappier
             }
         }
+    }
+    
+    
+    private func categorizeText(_ text: String, categories: [String], completion: @escaping (String) -> Void)  {
+            var textCategory = ""
+            // Recorre cada categoría personalizada.
+        DispatchQueue.main.async {
+            for category in categories {
+                // Si el texto contiene la categoría (ignorando mayúsculas y minúsculas), la añade a las categorías coincidentes.
+                if text.lowercased().contains(category.lowercased()) {
+                    
+                        textCategory = category
+                        
+                        print("ok")
+                   
+                   
+                }
+            }
+                    
+        if textCategory != "" {
+            completion(textCategory)
+        }else {
+            completion("Sin categoría")
+        }
+        }
+
+        
     }
     
     

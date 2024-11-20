@@ -85,11 +85,11 @@ struct CategoriesView: View {
     // Función para agregar una nueva categoría.
     private func addNewCategory() {
         // Verifica que el nombre de la nueva categoría no esté vacío y que no exista en las categorías personalizadas ni predeterminadas.
-        if !newCategory.isEmpty && !viewModel.customCategories.contains(newCategory) && !viewModel.categories.contains(newCategory) {
+        if !newCategory.isEmpty && !viewModel.customCategories.contains(newCategory) && !viewModel.addedCategories.contains(newCategory) {
             // Agrega la nueva categoría al `speechViewModel`.
             
             // Agrega una nueva categoría a la lista de categorías personalizadas si no existe previamente.
-            viewModel.categories.append(newCategory)
+            viewModel.addedCategories.append(newCategory)
             newCategory = "" // Limpia el campo de texto.
             showingConfirmation = true // Muestra la alerta de confirmación.
         } else {
