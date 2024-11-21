@@ -107,7 +107,9 @@ struct ContentView: View {
                             .foregroundColor(.primary)
                             .padding()
                             .opacity(viewModel.navigationLinkOpacity)
+                            
                     }
+                    .disabled(viewModel.navigationLinkDisable)
                 }
             }
             .navigationTitle("Transcripción")

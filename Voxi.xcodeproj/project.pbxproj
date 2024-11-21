@@ -12,7 +12,9 @@
 		E7015C232CB77DD2006D8A2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7015C222CB77DD2006D8A2A /* Assets.xcassets */; };
 		E7015C262CB77DD2006D8A2A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7015C252CB77DD2006D8A2A /* Preview Assets.xcassets */; };
 		E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */; };
-		E7B00C5A2CD7245D006AC47E /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B00C592CD7245D006AC47E /* NoteView.swift */; };
+		E7735DA52CEE9E6000B9A32D /* TranscriptionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7735DA42CEE9E6000B9A32D /* TranscriptionEntity.swift */; };
+		E7735DA72CEE9FB300B9A32D /* DetailNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7735DA62CEE9FB300B9A32D /* DetailNoteView.swift */; };
+		E7B00C5A2CD7245D006AC47E /* NoteForCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B00C592CD7245D006AC47E /* NoteForCategoryView.swift */; };
 		E7B00C5C2CD725BA006AC47E /* AllNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */; };
 		E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */; };
 		E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */; };
@@ -27,7 +29,9 @@
 		E7015C222CB77DD2006D8A2A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7015C252CB77DD2006D8A2A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E7015C2C2CB787D4006D8A2A /* SpeechViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewModel.swift; sourceTree = "<group>"; };
-		E7B00C592CD7245D006AC47E /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
+		E7735DA42CEE9E6000B9A32D /* TranscriptionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEntity.swift; sourceTree = "<group>"; };
+		E7735DA62CEE9FB300B9A32D /* DetailNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailNoteView.swift; sourceTree = "<group>"; };
+		E7B00C592CD7245D006AC47E /* NoteForCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteForCategoryView.swift; sourceTree = "<group>"; };
 		E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNotesView.swift; sourceTree = "<group>"; };
 		E7F804DD2CB8988E00DF35BA /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
@@ -106,8 +110,9 @@
 			children = (
 				E7015C202CB77DD2006D8A2A /* ContentView.swift */,
 				E7F804DF2CB8A04F00DF35BA /* CategoriesView.swift */,
-				E7B00C592CD7245D006AC47E /* NoteView.swift */,
+				E7B00C592CD7245D006AC47E /* NoteForCategoryView.swift */,
 				E7B00C5B2CD725BA006AC47E /* AllNotesView.swift */,
+				E7735DA62CEE9FB300B9A32D /* DetailNoteView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -116,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				E7F805CB2CD4434400DF35BA /* ViewState.swift */,
+				E7735DA42CEE9E6000B9A32D /* TranscriptionEntity.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -191,8 +197,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7015C212CB77DD2006D8A2A /* ContentView.swift in Sources */,
+				E7735DA72CEE9FB300B9A32D /* DetailNoteView.swift in Sources */,
+				E7735DA52CEE9E6000B9A32D /* TranscriptionEntity.swift in Sources */,
 				E7F804DE2CB8988E00DF35BA /* SpeechRecognizer.swift in Sources */,
-				E7B00C5A2CD7245D006AC47E /* NoteView.swift in Sources */,
+				E7B00C5A2CD7245D006AC47E /* NoteForCategoryView.swift in Sources */,
 				E7F805CC2CD4434400DF35BA /* ViewState.swift in Sources */,
 				E7015C2D2CB787D4006D8A2A /* SpeechViewModel.swift in Sources */,
 				E7F804E02CB8A04F00DF35BA /* CategoriesView.swift in Sources */,

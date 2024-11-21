@@ -32,7 +32,7 @@ struct CategoriesView: View {
                 // Muestra todas las categorías, incluyendo las predeterminadas y las personalizadas.
                 ForEach(viewModel.totalCategories, id: \.self) { category in
                     // Navega a la vista de notas para la categoría seleccionada.
-                    NavigationLink(destination: NoteView(category: category)) {
+                    NavigationLink(destination: NoteForCategoryView(category: category)) {
                         Text(category)
                         // Las categorías predeterminadas se muestran en color gris, las personalizadas en blanco.
                             .foregroundColor(viewModel.customCategories.contains(category) ? .gray : .white)
@@ -45,6 +45,7 @@ struct CategoriesView: View {
                         .foregroundColor(.blue)
                 }
             }
+            
         }
         // Establece un fondo negro que ocupa toda el área de la pantalla.
         .background(Color.black.edgesIgnoringSafeArea(.all))
@@ -87,6 +88,7 @@ struct CategoriesView: View {
         
         
     }
+    
     
     // Función para agregar una nueva categoría.
     private func addNewCategory() {

@@ -26,17 +26,17 @@ final class SpeechViewModel: ObservableObject  {
     @Published var buttonColor: Color = .green
     @Published var buttonImageName: String = "mic.fill"
     @Published var navigationLinkOpacity: Double = 1
+    @Published var navigationLinkDisable: Bool = false
     
     @Published var sentimenText: String = ""
     
-    @Published var category: String = ""
     @Published var addedCategories: [String] = []
     // Lista de categorías personalizadas para clasificar las transcripciones.
     let customCategories: [String] = ["Trabajo", "Personal", "Salud", "Finanzas", "Educación", "Sin categoría"]
     @Published var totalCategories: [String] = []
 
     // Array que almacena las transcripciones con su texto, análisis de sentimiento y categorías asociadas.
-    @Published var transcriptions: [(text: String, sentiment: String, category: String)] = []
+    @Published var transcriptions: [TranscriptionEntity] = []
     
     
     private var speechRecognizer = SpeechRecognizer()
@@ -82,20 +82,28 @@ final class SpeechViewModel: ObservableObject  {
                     guard let self = self else {
                         return
                     }
-                    self.sentimenText = sentiment
-                    print(sentiment)
+                    
+                        print(sentiment)
+                        if sentiment != "0.0" {
+                            self.sentimenText = sentiment
+                        } else {
+                            self.sentimenText = "Sin determinar"
+                        }
+                    categorizeText(recognizedText, categories: totalCategories, completion: { category in
+                        print(category)
+                        print(self.recognizedText)
+                        print("sentiment \(self.sentimenText)")
+                        // Almacena la transcripción con su sentimiento y categorías.
+                        self.transcriptions.append(TranscriptionEntity(text: self.recognizedText, sentiment: self.sentimenText, category: category))
+                        // Limpia la transcripción actual después de guardarla.
+                        self.recognizedText = ""
+                        self.sentimenText = ""
+                    })
+                    
                 }
                 .store(in: &cancellables)
             
-            categorizeText(recognizedText, categories: totalCategories, completion: { category in
-                self.category = category
-                print(category)
-                print(self.recognizedText)
-                // Almacena la transcripción con su sentimiento y categorías.
-                self.transcriptions.append((text: self.recognizedText, sentiment: self.sentimenText, category: category))
-                // Limpia la transcripción actual después de guardarla.
-                self.recognizedText = ""
-            })
+            
             
             
             
@@ -196,6 +204,7 @@ final class SpeechViewModel: ObservableObject  {
                                 buttonColor = .red
                                 buttonImageName = "stop.fill"
                                 navigationLinkOpacity = 0
+                                navigationLinkDisable = true
                                 placeholderText = "Escuchando"
                                 buttonViewState = .isButtonsSaveDeleteDisappier
                                 
@@ -228,6 +237,7 @@ final class SpeechViewModel: ObservableObject  {
                 buttonColor = .red
                 buttonImageName = "stop.fill"
                 navigationLinkOpacity = 0
+                navigationLinkDisable = true
                 placeholderText = "Escuchando"
                 buttonViewState = .isButtonsSaveDeleteDisappier
                 
@@ -248,6 +258,7 @@ final class SpeechViewModel: ObservableObject  {
             buttonColor = .green
             buttonImageName = "mic.fill"
             navigationLinkOpacity = 1
+            navigationLinkDisable = false
             placeholderText = ""
             if !recognizedText.isEmpty {
                 buttonViewState = .isButtonsSaveDeleteAppear
@@ -308,5 +319,15 @@ final class SpeechViewModel: ObservableObject  {
         }
     }
     
-    
+    func deleteTranscription(at offsets: IndexSet) {
+        
+        // Recorre los índices proporcionados para eliminar las transcripciones correspondientes.
+        offsets.forEach { index in
+            // Busca la posición de la transcripción en la lista general de `transcriptions` usando su texto.
+            if let transcriptionIndex = transcriptions.firstIndex(where: { $0.text == transcriptions[index].text }) {
+                // Elimina la transcripción de `speechViewModel.transcriptions`.
+                transcriptions.remove(at: transcriptionIndex)
+            }
+        }
+    }
 }
